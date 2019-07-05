@@ -15,12 +15,19 @@ export class Client extends BaseEntity {
   @Column()
   email: string;
 
-  @Column()
-  birthday: Date;
+  @Column({ nullable: true, type: 'timestamp without time zone' })
+  birthday: string;
 
-  @Column()
-  lastVisit: Date;
+  @Column({ nullable: true, type: 'timestamp without time zone' })
+  lastVisit: string;
 
-  @ManyToOne(type => Stylist, stylist => stylist.clients, { eager: false })
+  @ManyToOne(
+    type => Stylist,
+    stylist => stylist.clients,
+    { eager: false, onDelete: 'CASCADE' },
+  )
   stylist: Stylist;
+
+  @Column()
+  stylistId: number;
 }
