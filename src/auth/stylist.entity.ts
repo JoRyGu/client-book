@@ -1,6 +1,7 @@
 import { BaseEntity, Entity, PrimaryGeneratedColumn, Column, Unique, OneToMany } from 'typeorm';
 import { Client } from '../client/client.entity';
 import { Appointment } from '../appointment/appointment.entity';
+import { Service } from '../service/service.entity';
 
 @Entity('stylists')
 @Unique(['email'])
@@ -25,4 +26,7 @@ export class Stylist extends BaseEntity {
 
   @OneToMany(type => Appointment, appointment => appointment.stylist, { eager: true })
   appointments: Appointment[];
+
+  @OneToMany(type => Service, service => service.stylist, { eager: true })
+  services: Service[];
 }

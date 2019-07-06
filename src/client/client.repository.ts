@@ -21,6 +21,8 @@ export class ClientRepository extends Repository<Client> {
       );
     }
 
+    query.orderBy('name', 'ASC');
+
     try {
       const clients = await query.getMany();
       return clients;
