@@ -16,7 +16,7 @@ export class ClientRepository extends Repository<Client> {
 
     if (search) {
       query.andWhere(
-        '(clients.name LIKE :search OR clients.phoneNumber LIKE :search OR clients.email LIKE :search',
+        '(LOWER(clients.name) LIKE LOWER(:search) OR clients.phoneNumber LIKE :search OR LOWER(clients.email) LIKE LOWER(:search))',
         { search: `%${search}%`},
       );
     }
