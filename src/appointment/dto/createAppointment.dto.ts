@@ -1,7 +1,8 @@
 import { AppointmentStatus } from '../appointment-status.enum';
 
 export class CreateAppointmentDto {
-  date: string;
+  start: string;
   clientPhoneNumber: string;
   status: AppointmentStatus;
+  serviceIds: number[];
 }

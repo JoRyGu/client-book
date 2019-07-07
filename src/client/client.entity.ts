@@ -32,6 +32,6 @@ export class Client extends BaseEntity {
   @Column()
   stylistId: number;
 
-  @OneToMany(type => Appointment, appointment => appointment.client, { eager: true })
+  @OneToMany(type => Appointment, appointment => appointment.client, { eager: false })
   appointments: Appointment[];
 }

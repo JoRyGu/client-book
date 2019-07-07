@@ -1,5 +1,6 @@
-import { Entity, BaseEntity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
+import { Entity, BaseEntity, PrimaryGeneratedColumn, Column, ManyToOne, ManyToMany } from 'typeorm';
 import { Stylist } from '../auth/stylist.entity';
+import { Appointment } from '../appointment/appointment.entity';
 
 @Entity('services')
 export class Service extends BaseEntity {
@@ -23,4 +24,7 @@ export class Service extends BaseEntity {
 
   @Column()
   stylistId: number;
+
+  @ManyToMany(type => Appointment)
+  appointments: Appointment[];
 }

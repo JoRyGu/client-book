@@ -1,7 +1,8 @@
-import { Entity, BaseEntity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
+import { Entity, BaseEntity, PrimaryGeneratedColumn, Column, ManyToOne, ManyToMany, JoinTable } from 'typeorm';
 import { Stylist } from '../auth/stylist.entity';
 import { Client } from '../client/client.entity';
 import { AppointmentStatus } from './appointment-status.enum';
+import { Service } from '../service/service.entity';
 
 @Entity('appointments')
 export class Appointment extends BaseEntity {
@@ -9,7 +10,10 @@ export class Appointment extends BaseEntity {
   id: number;
 
   @Column({ type: 'timestamp without time zone' })
-  date: string;
+  start: string;
+
+  @Column({ type: 'timestamp without time zone' })
+  end: string;
 
   @Column({ default: AppointmentStatus.UPCOMING })
   status: AppointmentStatus;
@@ -20,9 +24,13 @@ export class Appointment extends BaseEntity {
   @Column()
   stylistId: number;
 
-  @ManyToOne(type => Client, client => client.appointments, { eager: false, onDelete: 'CASCADE' })
+  @ManyToOne(type => Client, client => client.appointments, { eager: true, onDelete: 'CASCADE' })
   client: Client;
 
   @Column()
   clientId: number;
+
+  @ManyToMany(type => Service, { eager: true })
+  @JoinTable({ name: 'appointment_services' })
+  services: Service[];
 }
