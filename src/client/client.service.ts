@@ -42,14 +42,13 @@ export class ClientService {
   }
 
   async updateClient(id: number, updateInfo: UpdateClientDto, stylist: Stylist): Promise<Client> {
-    const { name, phoneNumber, email, birthday, lastVisit } = updateInfo;
+    const { name, phoneNumber, email, birthday } = updateInfo;
     const client = await this.getClientById(id, stylist);
 
     if (name) { client.name = name; }
     if (phoneNumber) { client.phoneNumber = phoneNumber; }
     if (email) { client.email = email; }
     if (birthday) { client.birthday = convertToDateString(birthday); }
-    if (lastVisit) { client.lastVisit = convertToDateString(lastVisit); }
 
     await client.save();
     return client;

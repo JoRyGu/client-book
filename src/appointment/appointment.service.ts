@@ -76,8 +76,18 @@ export class AppointmentService {
   async addServiceToAppointment(id: number, stylist: Stylist, serviceId: number): Promise<Appointment> {
     const appointment = await this.getAppointmentById(id, stylist);
 
+    const found = appointment.services.find(s => s.id === serviceId);
+
+    if (found) {
+      throw new InternalServerErrorException(`Service with ID "${serviceId}" already exists for this appointment.`);
+    }
+
     const serviceRepo = getRepository(Service);
     const service = await serviceRepo.findOne({ where: { id: serviceId, stylistId: stylist.id } });
+
+    if (!service) {
+      throw new InternalServerErrorException(`Service with ID "${serviceId}" does not exist.`);
+    }
 
     appointment.services.push(service);
 

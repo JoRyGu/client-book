@@ -19,9 +19,6 @@ export class Client extends BaseEntity {
   @Column({ nullable: true, type: 'timestamp without time zone' })
   birthday: string;
 
-  @Column({ nullable: true, type: 'timestamp without time zone' })
-  lastVisit: string;
-
   @ManyToOne(
     type => Stylist,
     stylist => stylist.clients,
