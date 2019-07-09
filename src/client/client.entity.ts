@@ -1,6 +1,7 @@
 import { Entity, BaseEntity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany } from 'typeorm';
 import { Stylist } from '../auth/stylist.entity';
 import { Appointment } from '../appointment/appointment.entity';
+import { Formula } from '../formula/formula.entity';
 
 @Entity('clients')
 export class Client extends BaseEntity {
@@ -31,4 +32,7 @@ export class Client extends BaseEntity {
 
   @OneToMany(type => Appointment, appointment => appointment.client, { eager: false })
   appointments: Appointment[];
+
+  @OneToMany(type => Formula, formula => formula.client, { eager: true })
+  formulas: Formula[];
 }

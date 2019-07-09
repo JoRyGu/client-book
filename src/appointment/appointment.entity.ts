@@ -1,8 +1,9 @@
-import { Entity, BaseEntity, PrimaryGeneratedColumn, Column, ManyToOne, ManyToMany, JoinTable } from 'typeorm';
+import { Entity, BaseEntity, PrimaryGeneratedColumn, Column, ManyToOne, ManyToMany, JoinTable, OneToMany } from 'typeorm';
 import { Stylist } from '../auth/stylist.entity';
 import { Client } from '../client/client.entity';
 import { AppointmentStatus } from './appointment-status.enum';
 import { Service } from '../service/service.entity';
+import { Formula } from '../formula/formula.entity';
 
 @Entity('appointments')
 export class Appointment extends BaseEntity {
@@ -33,4 +34,7 @@ export class Appointment extends BaseEntity {
   @ManyToMany(type => Service, { eager: true })
   @JoinTable({ name: 'appointment_services' })
   services: Service[];
+
+  @OneToMany(type => Formula, formula => formula.appointment, { eager: true })
+  formulas: Formula[];
 }
