@@ -7,6 +7,7 @@ import { Stylist } from '../auth/stylist.entity';
 import { Appointment } from './appointment.entity';
 import { CreateAppointmentDto } from './dto/createAppointment.dto';
 import { AppointmentStatus } from './appointment-status.enum';
+import { CreateFormulaDto } from '../formula/dto/create-formula.dto';
 
 @Controller('appointments')
 @UseGuards(AuthGuard())
@@ -79,5 +80,23 @@ export class AppointmentController {
     @Param('serviceId', ParseIntPipe) serviceId: number,
   ): Promise<Appointment> {
     return this.appointmentService.removeServiceFromAppointment(id, stylist, serviceId);
+  }
+
+  @Post(':id/formulas')
+  addFormulaToAppointment(
+    @Body() formulaInfo: CreateFormulaDto,
+    @GetStylist() stylist: Stylist,
+    @Param('id', ParseIntPipe) appointmentId: number,
+  ): Promise<Appointment> {
+    return this.appointmentService.addFormulaToAppointment(formulaInfo, stylist, appointmentId);
+  }
+
+  @Delete(':id/formulas/:formulaId')
+  removeFormulaFromAppointment(
+    @Param('id', ParseIntPipe) appointmentId: number,
+    @Param('formulaId', ParseIntPipe) formulaId: number,
+    @GetStylist() stylist: Stylist,
+  ): Promise<Appointment> {
+    return this.appointmentService.removeFormulaFromAppointment(formulaId, stylist, appointmentId);
   }
 }

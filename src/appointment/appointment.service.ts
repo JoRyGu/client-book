@@ -8,15 +8,21 @@ import { CreateAppointmentDto } from './dto/createAppointment.dto';
 import { getRepository } from 'typeorm';
 import { Service } from '../service/service.entity';
 import { AppointmentStatus } from './appointment-status.enum';
+import { FormulaRepository } from '../formula/formula.repository';
+import { AddFormulaToAppointmentDto } from './dto/addFormulaToAppointment.dto';
+import { CreateFormulaDto } from 'src/formula/dto/create-formula.dto';
 
 @Injectable()
 export class AppointmentService {
   constructor(
     @InjectRepository(AppointmentRepository)
     private appointmentRepo: AppointmentRepository,
+    @InjectRepository(FormulaRepository)
+    private formulaRepo: FormulaRepository,
   ) {
   }
 
+  // READ
   getAppointments(filterDto: GetAppointmentsDto, stylist: Stylist): Promise<Appointment[]> {
     return this.appointmentRepo.getAppointments(filterDto, stylist);
   }
@@ -31,10 +37,12 @@ export class AppointmentService {
     return found;
   }
 
+  // CREATE
   createAppointment(appointmentInfo: CreateAppointmentDto, stylist: Stylist): Promise<Appointment> {
     return this.appointmentRepo.createAppointment(appointmentInfo, stylist);
   }
 
+  // DELETE
   async deleteAppointment(id: number, stylist: Stylist): Promise<void> {
     const result = await this.appointmentRepo.delete({ id, stylistId: stylist.id });
 
@@ -43,6 +51,7 @@ export class AppointmentService {
     }
   }
 
+  // UPDATE
   async updateAppointmentStatus(id: number, stylist: Stylist, status: AppointmentStatus): Promise<Appointment> {
     const appointment = await this.getAppointmentById(id, stylist);
 
@@ -125,6 +134,27 @@ export class AppointmentService {
 
     await appointment.save();
 
+    return appointment;
+  }
+
+  async addFormulaToAppointment(formulaInfo: CreateFormulaDto, stylist: Stylist, appointmentId: number): Promise<Appointment> {
+    const appointment = await this.appointmentRepo.findOne({ where: { id: appointmentId, stylistId: stylist.id }});
+    const client = appointment.client;
+    const formula = await this.formulaRepo.createFormula(formulaInfo, stylist);
+
+    appointment.formulas.push(formula);
+    client.formulas.push(formula);
+
+    await appointment.save();
+    await client.save();
+
+    return appointment;
+  }
+
+  async removeFormulaFromAppointment(formulaId: number, stylist: Stylist, appointmentId: number): Promise<Appointment> {
+    await this.formulaRepo.deleteFormula(formulaId, stylist);
+
+    const appointment = await this.appointmentRepo.findOne({ where: { id: appointmentId, stylistId: stylist.id }});
     return appointment;
   }
 }

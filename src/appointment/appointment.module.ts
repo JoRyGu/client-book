@@ -4,11 +4,12 @@ import { AppointmentService } from './appointment.service';
 import { AuthModule } from '../auth/auth.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppointmentRepository } from './appointment.repository';
+import { FormulaRepository } from '../formula/formula.repository';
 
 @Module({
   imports: [
     AuthModule,
-    TypeOrmModule.forFeature([AppointmentRepository]),
+    TypeOrmModule.forFeature([AppointmentRepository, FormulaRepository]),
   ],
   controllers: [AppointmentController],
   providers: [AppointmentService],

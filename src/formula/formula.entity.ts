@@ -24,10 +24,10 @@ export class Formula extends BaseEntity {
   @ManyToOne(type => Client, client => client.formulas)
   client: Client;
 
-  @Column()
+  @Column({ nullable: true })
   clientId: number;
 
-  @ManyToOne(type => Stylist, stylist => stylist.formulas)
+  @ManyToOne(type => Stylist, stylist => stylist.formulas, { onDelete: 'CASCADE' })
   stylist: Stylist;
 
   @Column()
@@ -36,6 +36,6 @@ export class Formula extends BaseEntity {
   @ManyToOne(type => Appointment, appointment => appointment.formulas)
   appointment: Appointment;
 
-  @Column()
+  @Column({ nullable: true })
   appointmentId: number;
 }
