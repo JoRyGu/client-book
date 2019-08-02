@@ -1,8 +1,9 @@
-import { Entity, BaseEntity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany } from 'typeorm';
+import {Entity, BaseEntity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany, Unique} from 'typeorm';
 import { Stylist } from '../auth/stylist.entity';
 import { Appointment } from '../appointment/appointment.entity';
 
 @Entity('clients')
+@Unique(['phoneNumber'])
 export class Client extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
