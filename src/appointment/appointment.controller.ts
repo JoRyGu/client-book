@@ -6,6 +6,8 @@ import { GetStylist } from '../auth/getStylist.decorator';
 import { Stylist } from '../auth/stylist.entity';
 import { Appointment } from './appointment.entity';
 import { CreateAppointmentDto } from './dto/createAppointment.dto';
+import { AppointmentStatus } from './appointment-status.enum';
+import { CreateFormulaDto } from '../formula/dto/create-formula.dto';
 
 @Controller('appointments')
 @UseGuards(AuthGuard())
@@ -44,6 +46,15 @@ export class AppointmentController {
     return this.appointmentService.deleteAppointment(id, stylist);
   }
 
+  @Patch(':id/status')
+  updateAppointmentStatus(
+    @Param('id', ParseIntPipe) id: number,
+    @GetStylist() stylist: Stylist,
+    @Body('status') newStatus: AppointmentStatus,
+  ): Promise<Appointment> {
+    return this.appointmentService.updateAppointmentStatus(id, stylist, newStatus);
+  }
+
   @Patch(':id/date')
   updateAppointmentDate(
     @Param('id', ParseIntPipe) id: number,
@@ -51,5 +62,41 @@ export class AppointmentController {
     @Body('date') newDate: string,
   ) {
     return this.appointmentService.updateAppointmentDate(id, stylist, newDate);
+  }
+
+  @Post(':id/services')
+  addServiceToAppointment(
+    @Param('id', ParseIntPipe) id: number,
+    @GetStylist() stylist: Stylist,
+    @Body('serviceId') serviceId: number,
+  ): Promise<Appointment> {
+    return this.appointmentService.addServiceToAppointment(id, stylist, serviceId);
+  }
+
+  @Delete(':id/services/:serviceId')
+  removeServiceFromAppointment(
+    @Param('id', ParseIntPipe) id: number,
+    @GetStylist() stylist: Stylist,
+    @Param('serviceId', ParseIntPipe) serviceId: number,
+  ): Promise<Appointment> {
+    return this.appointmentService.removeServiceFromAppointment(id, stylist, serviceId);
+  }
+
+  @Post(':id/formulas')
+  addFormulaToAppointment(
+    @Body() formulaInfo: CreateFormulaDto,
+    @GetStylist() stylist: Stylist,
+    @Param('id', ParseIntPipe) appointmentId: number,
+  ): Promise<Appointment> {
+    return this.appointmentService.addFormulaToAppointment(formulaInfo, stylist, appointmentId);
+  }
+
+  @Delete(':id/formulas/:formulaId')
+  removeFormulaFromAppointment(
+    @Param('id', ParseIntPipe) appointmentId: number,
+    @Param('formulaId', ParseIntPipe) formulaId: number,
+    @GetStylist() stylist: Stylist,
+  ): Promise<Appointment> {
+    return this.appointmentService.removeFormulaFromAppointment(formulaId, stylist, appointmentId);
   }
 }

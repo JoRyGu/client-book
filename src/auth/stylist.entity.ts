@@ -2,6 +2,7 @@ import { BaseEntity, Entity, PrimaryGeneratedColumn, Column, Unique, OneToMany }
 import { Client } from '../client/client.entity';
 import { Appointment } from '../appointment/appointment.entity';
 import { Service } from '../service/service.entity';
+import { Formula } from '../formula/formula.entity';
 
 @Entity('stylists')
 @Unique(['email'])
@@ -29,4 +30,7 @@ export class Stylist extends BaseEntity {
 
   @OneToMany(type => Service, service => service.stylist, { eager: true })
   services: Service[];
+
+  @OneToMany(type => Formula, formula => formula.stylist, { eager: true })
+  formulas: Formula[];
 }

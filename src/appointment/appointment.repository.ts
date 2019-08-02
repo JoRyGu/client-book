@@ -36,7 +36,7 @@ export class AppointmentRepository extends Repository<Appointment> {
   async createAppointment(appointmentInfo: CreateAppointmentDto, stylist: Stylist): Promise<Appointment> {
     const { start, clientPhoneNumber, status, serviceIds } = appointmentInfo;
 
-    if (!AppointmentStatus[status]) {
+    if (status && !AppointmentStatus[status]) {
       throw new InternalServerErrorException('Invalid Status Entered.');
     }
 
@@ -59,7 +59,11 @@ export class AppointmentRepository extends Repository<Appointment> {
     const appointment = new Appointment();
     appointment.start = start;
     appointment.end = endDate.toISOString();
-    appointment.status = status;
+
+    if (status) {
+      appointment.status = status;
+    }
+
     appointment.client = client;
     appointment.stylist = stylist;
     appointment.services = services;
