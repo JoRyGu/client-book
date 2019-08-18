@@ -15,6 +15,7 @@ describe('Auth Routes', () => {
   const baseEndpoint = axios.create({ baseURL: 'http://localhost:3000/auth' });
   const johnDoeSignup = createJohnDoe;
   const johnDoeSignIn = signInJohnDoe;
+  const test = 0;
 
   beforeAll(async () => {
     app = await NestFactory.create(AppModule, { logger: false });
