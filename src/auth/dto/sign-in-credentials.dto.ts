@@ -5,7 +5,6 @@ import {
   Matches,
   IsEmail,
 } from 'class-validator';
-import { ApiModelProperty } from '@nestjs/swagger';
 
 export class SignInCredentialsDto {
   @IsString()
