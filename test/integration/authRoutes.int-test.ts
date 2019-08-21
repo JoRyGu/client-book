@@ -15,21 +15,20 @@ describe('Auth Routes', () => {
   const baseEndpoint = axios.create({ baseURL: 'http://localhost:3000/auth' });
   const johnDoeSignup = createJohnDoe;
   const johnDoeSignIn = signInJohnDoe;
-  const test = 0;
 
-  beforeAll(async () => {
-    app = await NestFactory.create(AppModule, { logger: false });
-    manager = getManager();
-    await app.listen(3000);
-  });
+  // beforeAll(async () => {
+  //   app = await NestFactory.create(AppModule, { logger: false });
+  //   manager = getManager();
+  //   await app.listen(3000);
+  // });
 
   beforeEach(async () => {
     await clearTables(['stylists']);
   });
 
-  afterAll(async () => {
-    await app.close();
-  });
+  // afterAll(async () => {
+  //   await app.close();
+  // });
 
   describe('POST auth/signup', () => {
     it('should respond with a "201:CREATED" status when sent with valid data', async () => {

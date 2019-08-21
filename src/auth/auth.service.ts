@@ -19,7 +19,9 @@ export class AuthService {
     return this.stylistRepo.signUp(authCredentials);
   }
 
-  async signIn(authCredentials: SignInCredentialsDto): Promise<JwtResponseToken> {
+  async signIn(
+    authCredentials: SignInCredentialsDto,
+  ): Promise<JwtResponseToken> {
     const email = await this.stylistRepo.validatePassword(authCredentials);
 
     if (!email) {
@@ -31,5 +33,4 @@ export class AuthService {
 
     return { accessToken };
   }
-
 }

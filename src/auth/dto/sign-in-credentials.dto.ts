@@ -1,4 +1,11 @@
-import { IsString, MinLength, MaxLength, Matches, IsEmail } from 'class-validator';
+import {
+  IsString,
+  MinLength,
+  MaxLength,
+  Matches,
+  IsEmail,
+} from 'class-validator';
+import { ApiModelProperty } from '@nestjs/swagger';
 
 export class SignInCredentialsDto {
   @IsString()
@@ -8,7 +15,8 @@ export class SignInCredentialsDto {
   @IsString()
   @MinLength(8)
   @MaxLength(100)
-  @Matches(/^(?=[^\d_].*?\d)\w(\w|[!@#$%]){7,100}/,
-    { message: 'Password too weak.'})
+  @Matches(/^(?=[^\d_].*?\d)\w(\w|[!@#$%]){7,100}/, {
+    message: 'Password too weak.',
+  })
   password: string;
 }
