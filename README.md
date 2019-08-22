@@ -26,6 +26,10 @@ $ npm run start:prod
 $ npm run test:int
 ```
 
+## Wiki
+
+[Client Book API](https://github.com/JoRyGu/client-book/wiki)
+
 ## Stay in touch
 
 - Author - [Josh Gude](https://jgude.dev)
