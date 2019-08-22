@@ -16,21 +16,21 @@ describe('Auth Routes', () => {
   const johnDoeSignup = createJohnDoe;
   const johnDoeSignIn = signInJohnDoe;
 
-  // beforeAll(async () => {
-  //   app = await NestFactory.create(AppModule, { logger: false });
-  //   manager = getManager();
-  //   await app.listen(3000);
-  // });
-
-  beforeEach(async () => {
-    await clearTables(['stylists']);
+  beforeAll(async () => {
+    app = await NestFactory.create(AppModule, { logger: false });
+    manager = getManager();
+    await app.listen(3000);
   });
 
-  // afterAll(async () => {
-  //   await app.close();
-  // });
+  afterAll(async () => {
+    await app.close();
+  });
 
   describe('POST auth/signup', () => {
+    beforeEach(async () => {
+      await clearTables(['stylists']);
+    });
+
     it('should respond with a "201:CREATED" status when sent with valid data', async () => {
       const res = await baseEndpoint.post('/signup', johnDoeSignup);
 
@@ -98,6 +98,45 @@ describe('Auth Routes', () => {
       return expect(
         baseEndpoint.post('/signup', invalid),
       ).rejects.toHaveProperty('response.status', 400);
+    });
+  });
+
+  describe('POST /auth/signin', () => {
+    beforeAll(async () => {
+      await clearTables(['stylists']);
+      await baseEndpoint.post('/signup', johnDoeSignup);
+    });
+
+    it('should return "201:CREATED" when signing into an existing account with the correct credentials', async () => {
+      const res = await baseEndpoint.post('/sign-in', johnDoeSignIn);
+      // data.accessToken
+
+      expect(res.status).toBe(201);
+    });
+
+    it('should return a data access token when successfully signing in', async () => {
+      const res = await baseEndpoint.post('/sign-in', johnDoeSignIn);
+
+      expect(res.data).toHaveProperty('accessToken');
+      expect(res.data.accessToken.length).toBe(164);
+    });
+
+    it('should return an "Invalid credentials" message when attempting to sign in to an account that does not exist', async () => {
+      const invalid = { ...johnDoeSignIn };
+      invalid.email = 'crazy.email@gmail.com';
+
+      return expect(
+        baseEndpoint.post('/sign-in', invalid),
+      ).rejects.toHaveProperty('response.data.message', 'Invalid credentials');
+    });
+
+    it('should return an "Invalid credentials" message when entering the wrong password for an account that does exist', async () => {
+      const invalid = { ...johnDoeSignIn };
+      invalid.password = 'th!sIsN0tCorrec7';
+
+      return expect(
+        baseEndpoint.post('/sign-in', invalid),
+      ).rejects.toHaveProperty('response.data.message', 'Invalid credentials');
     });
   });
 });
