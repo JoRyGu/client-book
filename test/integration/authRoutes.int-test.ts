@@ -23,6 +23,7 @@ describe('Auth Routes', () => {
   });
 
   afterAll(async () => {
+    setTimeout(() => null, 500);
     await app.close();
   });
 
