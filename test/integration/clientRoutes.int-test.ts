@@ -52,8 +52,6 @@ describe('Client Routes', () => {
       const res = await baseEndpoint.post('', createClient, { headers });
       const clients = await baseEndpoint.get('', { headers });
 
-      console.log(JSON.stringify(clients.data));
-
       expect(clients.status).toBe(200);
     });
 
@@ -67,23 +65,104 @@ describe('Client Routes', () => {
     it('should respond with a "401:UNAUTHORIZED" status when no token is passed via an Authorization header', async () => {
       await baseEndpoint.post('', createClient, { headers });
 
-      try {
-        await baseEndpoint.get('');
-      } catch (err) {
-        expect(err.response.status).toBe(401);
-      }
+      return expect(baseEndpoint.get('')).rejects.toHaveProperty(
+        'response.status',
+        401,
+      );
     });
 
     it('should respond with a "401:UNAUTHORIZED" status when an incorrect token is passed via an Authorization header', async () => {
       await baseEndpoint.post('', createClient, { headers });
 
-      try {
-        await baseEndpoint.get('', {
-          headers: { Authorization: 'Bearer 3k389dj3j2kdkn3kjd98' },
-        });
-      } catch (err) {
-        expect(err.response.status).toBe(401);
-      }
+      return expect(
+        baseEndpoint.get('', {
+          headers: { Authorization: 'Bearer 3234234234322bnbn' },
+        }),
+      ).rejects.toHaveProperty('response.status', 401);
+    });
+  });
+
+  describe('GET /clients/{id}', () => {
+    beforeEach(async () => {
+      await clearTables(['clients']);
+    });
+
+    it('should respond with a "200:OK" status when client is retreived successfully', async () => {
+      await baseEndpoint.post('', createClient, { headers });
+      const clients = await baseEndpoint.get('/1', { headers });
+
+      expect(clients.status).toBe(200);
+    });
+
+    it('should return a single client object, not an array', async () => {
+      await baseEndpoint.post('', createClient, { headers });
+      const clients = await baseEndpoint.get('/1', { headers });
+
+      expect(clients.data).not.toBeInstanceOf(Array);
+    });
+
+    it('should respond with a "401:UNAUTHORIZED" status when no token is passed via an Authorization header', async () => {
+      await baseEndpoint.post('', createClient, { headers });
+
+      return expect(baseEndpoint.get('/1')).rejects.toHaveProperty(
+        'response.status',
+        401,
+      );
+    });
+
+    it('should respond with a "401:UNAUTHORIZED" status when an incorrect token is passed via an Authorization header', async () => {
+      await baseEndpoint.post('', createClient, { headers });
+
+      return expect(
+        baseEndpoint.get('/1', {
+          headers: { Authorization: 'lsdlkfajklei8d83n;ldkn3' },
+        }),
+      ).rejects.toHaveProperty('response.status', 401);
+    });
+  });
+
+  describe('POST /clients', () => {
+    beforeEach(async () => {
+      await clearTables(['clients']);
+    });
+
+    it('should respond with a "201:CREATED" status when client is created successfully', async () => {
+      const newClient = await baseEndpoint.post('', createClient, { headers });
+
+      expect(newClient.status).toBe(201);
+    });
+
+    it('should return the newly created client as a client object', async () => {
+      const newClient = await baseEndpoint.post('', createClient, { headers });
+
+      expect(newClient.data).toHaveProperty('name', 'Keanu Reaves');
+    });
+
+    it('should respond with a "400:BAD REQUEST" status when the name property is blank', async () => {
+      const invalid = { ...createClient };
+      invalid.name = '';
+
+      return expect(
+        baseEndpoint.post('', invalid, { headers }),
+      ).rejects.toHaveProperty('response.status', 400);
+    });
+
+    it('should respond with a "400:BAD REQUEST" status when the phone number property is less than 10 characters', async () => {
+      const invalid = { ...createClient };
+      invalid.phoneNumber = '123';
+
+      return expect(
+        baseEndpoint.post('', invalid, { headers }),
+      ).rejects.toHaveProperty('response.status', 400);
+    });
+
+    it('should respond with a "400:BAD REQUEST" status when the phone number property is more than 10 characters', async () => {
+      const invalid = { ...createClient };
+      invalid.phoneNumber = '1234567890123';
+
+      return expect(
+        baseEndpoint.post('', invalid, { headers }),
+      ).rejects.toHaveProperty('response.status', 400);
     });
   });
 });

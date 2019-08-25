@@ -2,13 +2,19 @@ import { EntityRepository, Repository } from 'typeorm';
 import { Client } from './client.entity';
 import { GetClientsFilterDto } from './dto/getClientsFilter.dto';
 import { Stylist } from '../auth/stylist.entity';
-import { InternalServerErrorException } from '@nestjs/common';
+import {
+  InternalServerErrorException,
+  BadRequestException,
+} from '@nestjs/common';
 import { CreateClientDto } from './dto/createClient.dto';
 import { convertToDateString } from '../helpers/convertToDateString';
 
 @EntityRepository(Client)
 export class ClientRepository extends Repository<Client> {
-  async getClients(filterDto: GetClientsFilterDto, stylist: Stylist): Promise<Client[]> {
+  async getClients(
+    filterDto: GetClientsFilterDto,
+    stylist: Stylist,
+  ): Promise<Client[]> {
     const { search } = filterDto;
     const query = this.createQueryBuilder('clients');
 
@@ -17,7 +23,7 @@ export class ClientRepository extends Repository<Client> {
     if (search) {
       query.andWhere(
         '(LOWER(clients.name) LIKE LOWER(:search) OR clients.phoneNumber LIKE :search OR LOWER(clients.email) LIKE LOWER(:search))',
-        { search: `%${search}%`},
+        { search: `%${search}%` },
       );
     }
 
@@ -31,8 +37,19 @@ export class ClientRepository extends Repository<Client> {
     }
   }
 
-  async createClient(clientInfo: CreateClientDto, stylist: Stylist): Promise<Client> {
+  async createClient(
+    clientInfo: CreateClientDto,
+    stylist: Stylist,
+  ): Promise<Client> {
     const { name, phoneNumber, email, birthday } = clientInfo;
+
+    const existing = await Client.findOne({ where: { email } });
+
+    if (existing) {
+      throw new BadRequestException(
+        'Client already exists with that phone number.',
+      );
+    }
 
     const client = new Client();
     client.name = name;
